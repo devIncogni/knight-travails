@@ -16,7 +16,7 @@ const chessBoard = Array.from({ length: 8 }, (_, i) => {
 
 // console.table(chessBoard);
 
-function knightMoves(start = [0, 0], end = [2, 1]) {
+function knightMoves(start = [0, 0], end = [5, 4]) {
   let i = 0;
   let stepsTaken = 0;
   const discoverdSquares = [
@@ -27,17 +27,23 @@ function knightMoves(start = [0, 0], end = [2, 1]) {
     },
   ];
 
-  let currentNode = chessBoard[start[0]][start[1]];
-  let currenSquare = start;
+  //   let currentNode = chessBoard[start[0]][start[1]];
+  //   let currentSquare = start;
 
-  while (i++ < 1) {
-    for (let i = 0; i < currentNode.length; i++) {
-      let node = currentNode[i];
+  //   while (i++ < 1) {
+  for (let i = 0; i < discoverdSquares.length; i++) {
+    let currentSquare = discoverdSquares[i].location;
+    let currentNode = chessBoard[currentSquare[0]][currentSquare[1]];
+
+    for (let j = 0; j < currentNode.length; j++) {
+      let node = currentNode[j];
       let nodeObj = {
         location: node,
-        previousSquare: currenSquare,
-        steps: i,
+        previousSquare: currentSquare,
+        steps: discoverdSquares[i].steps + 1,
       };
+
+      discoverdSquares.push(nodeObj);
 
       if (nodeObj.location[0] == end[0] && nodeObj.location[1] == end[1]) {
         stepsTaken = nodeObj.steps;
@@ -45,6 +51,8 @@ function knightMoves(start = [0, 0], end = [2, 1]) {
       }
     }
   }
+
+  //   }
 }
 
 const moves = knightMoves();
