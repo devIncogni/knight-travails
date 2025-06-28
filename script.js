@@ -2,7 +2,7 @@ class ChessSquare {
   constructor(i, j) {
     this.currentLocation = [i, j];
     this.discovered = false;
-    this.previousSquare = [null];
+    this.previousSquare = null;
     this.shortestDistance = 0;
   }
 
@@ -46,7 +46,13 @@ class Knight {
       const newX = start[0] + this.dx[i];
       const newY = start[1] + this.dy[i];
 
-      if (newX >= 0 && newY >= 0 && newX < 8 && newY < 8) {
+      if (
+        newX >= 0 &&
+        newY >= 0 &&
+        newX < 8 &&
+        newY < 8 &&
+        !this.chessBoard.board[newX][newY].discovered
+      ) {
         nextSetOfMovableSquares.push([newX, newY]);
       }
     }
@@ -55,6 +61,7 @@ class Knight {
 
   updateEstimates(start) {
     const currSqObj = this.chessBoard.board[start[0]][start[1]];
+    currSqObj.discovered = true;
     const stepsUpToStart = currSqObj.shortestDistance;
 
     const nextSetOfMovableSquares = this.nextMovableSquares(start);
@@ -72,9 +79,31 @@ class Knight {
         selNxtMovSqObj.previousSquare = start;
       }
     }
+
+    return nextSetOfMovableSquares;
   }
 
-  moveKnight(start = [0, 0], end = [2, 1]) {}
+
+
+  moveKnight(start = [0, 0], end = [2, 1]) {
+    if (start[0] == end[0] && start[1] == end[1]) {
+      return start;
+    }
+    const endObj = this.chessBoard.board[end[0]][end[1]];
+    const squares = [[start]];
+    // curr = start
+    for (let i = 0; i < squares.length; i++) {
+      squares[i + 1] = [];
+      const currSetOfSq = squares[i];
+      for (let j = 0; j < currSetOfSq.length; j++) {
+        const currSq = currSetOfSq[j];
+        if (currSq[0] == end[0] && currSq[1] == end[1]) {
+          return endObj.shortestDistance;
+        }
+        squares[i + 1] = squares[i + 1].concat(this.updateEstimates(currSq));
+      }
+    }
+  }
 }
 
 const cb = new ChessBoard();
