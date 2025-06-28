@@ -3,7 +3,7 @@ class ChessSquare {
     this.currentLocation = [i, j];
     this.discovered = false;
     this.previousSquare = [null];
-    this.shortestDistance = null;
+    this.shortestDistance = 0;
   }
 
   isDiscoverd() {
@@ -46,52 +46,35 @@ class Knight {
       const newX = start[0] + this.dx[i];
       const newY = start[1] + this.dy[i];
 
-      if (
-        newX >= 0 &&
-        newY >= 0 &&
-        newX < 8 &&
-        newY < 8 &&
-        !this.chessBoard.board[newX][newY].isDiscoverd()
-      ) {
+      if (newX >= 0 && newY >= 0 && newX < 8 && newY < 8) {
         nextSetOfMovableSquares.push([newX, newY]);
       }
     }
     return nextSetOfMovableSquares;
   }
 
-  moveKnight(start = [0, 0], end = [2, 1]) {
-    const pathArray = [];
-    pathArray.push(start);
-
-    this.chessBoard.board[start[0]][start[1]].discovered = true;
-
-    if (start == end) {
-      return end;
-    }
+  updateEstimates(start) {
+    const currSqObj = this.chessBoard.board[start[0]][start[1]];
+    const stepsUpToStart = currSqObj.shortestDistance;
 
     const nextSetOfMovableSquares = this.nextMovableSquares(start);
 
     for (let i = 0; i < nextSetOfMovableSquares.length; i++) {
-      const currentProbingSquare = nextSetOfMovableSquares[i];
-      this.chessBoard.board[currentProbingSquare[0]][
-        currentProbingSquare[1]
-      ].discovered = true;
+      const selNxtMovSq = nextSetOfMovableSquares[i];
+      const selNxtMovSqObj =
+        this.chessBoard.board[selNxtMovSq[0]][selNxtMovSq[1]];
 
-      const tempPathArray = pathArray.concat(
-        this.moveKnight(currentProbingSquare, end)
-      );
-
-      if (i > 0 && tempPathArray.length < pathArray.length) {
-        pathArray = tempPathArray;
-      } else {
-        continue;
+      if (
+        selNxtMovSqObj.shortestDistance === 0 ||
+        stepsUpToStart + 1 < selNxtMovSqObj.shortestDistance
+      ) {
+        selNxtMovSqObj.shortestDistance = stepsUpToStart + 1;
+        selNxtMovSqObj.previousSquare = start;
       }
     }
-
-    // pathArray.reverse();
-
-    return pathArray;
   }
+
+  moveKnight(start = [0, 0], end = [2, 1]) {}
 }
 
 const cb = new ChessBoard();
