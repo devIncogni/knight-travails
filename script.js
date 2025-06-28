@@ -83,7 +83,19 @@ class Knight {
     return nextSetOfMovableSquares;
   }
 
+  reverseTracePath(end) {
+    let root = this.chessBoard.board[end[0]][end[1]];
+    const pathArr = [];
+    while (root.previousSquare !== null) {
+      pathArr.push(root.currentLocation);
+      let prevSq = root.previousSquare;
+      root = this.chessBoard.board[prevSq[0]][prevSq[1]];
+    }
+    pathArr.push(root.currentLocation);
 
+    pathArr.reverse();
+    return pathArr;
+  }
 
   moveKnight(start = [0, 0], end = [2, 1]) {
     if (start[0] == end[0] && start[1] == end[1]) {
@@ -98,7 +110,7 @@ class Knight {
       for (let j = 0; j < currSetOfSq.length; j++) {
         const currSq = currSetOfSq[j];
         if (currSq[0] == end[0] && currSq[1] == end[1]) {
-          return endObj.shortestDistance;
+          return this.reverseTracePath(end);
         }
         squares[i + 1] = squares[i + 1].concat(this.updateEstimates(currSq));
       }
