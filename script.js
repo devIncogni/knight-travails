@@ -98,22 +98,13 @@ class Knight {
   }
 
   moveKnight(start = [0, 0], end = [2, 1]) {
-    if (start[0] == end[0] && start[1] == end[1]) {
-      return start;
-    }
-    const endObj = this.chessBoard.board[end[0]][end[1]];
-    const squares = [[start]];
-    // curr = start
-    for (let i = 0; i < squares.length; i++) {
-      squares[i + 1] = [];
-      const currSetOfSq = squares[i];
-      for (let j = 0; j < currSetOfSq.length; j++) {
-        const currSq = currSetOfSq[j];
-        if (currSq[0] == end[0] && currSq[1] == end[1]) {
-          return this.reverseTracePath(end);
-        }
-        squares[i + 1] = squares[i + 1].concat(this.updateEstimates(currSq));
+    let dQueue = [start];
+    for (let i = 0; i < dQueue.length; i++) {
+      const currSq = dQueue[i];
+      if (currSq[0] == end[0] && currSq[1] == end[1]) {
+        return this.reverseTracePath(end);
       }
+      dQueue = dQueue.concat(this.updateEstimates(currSq));
     }
   }
 }
